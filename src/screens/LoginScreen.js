@@ -9,6 +9,7 @@ import {
   Platform,
   Animated
 } from 'react-native';
+import firebase from 'firebase';
 
 import Input from '../components/form/Input';
 import Button from '../components/form/Button';
@@ -21,7 +22,11 @@ export default class LoginScreen extends Component {
     email: '',
     password: '',
     loading: false,
-    done: false
+    done: false,
+    error: false,
+    errorMessage: null,
+    connected: false,
+    user: null
   };
 
   keyboardHeight = new Animated.Value(0);
@@ -85,13 +90,55 @@ export default class LoginScreen extends Component {
 
     this.setState({ loading: true });
 
-    setTimeout(() => {
-      this.setState({ done: true, loading: false });
+    const { email, password } = this.state;
 
-      setTimeout(() => {
-        this.setState({ done: false });
-      }, 500);
-    }, 500);
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(user => {
+        this.setState({
+          done: true,
+          loading: false,
+          connected: true,
+          error: false,
+          user: {
+            token: user.refreshToken,
+            email: user.email
+          }
+        });
+      })
+      .catch(e => {
+        //Login was not successful, let's create a new account
+        firebase
+          .auth()
+          .createUserWithEmailAndPassword(email, password)
+          .then(user => {
+            this.setState({
+              done: true,
+              loading: false,
+              connected: true,
+              error: false,
+              user: {
+                token: user.refreshToken,
+                email: user.email
+              }
+            });
+          })
+          .catch(error => {
+            this.setState({
+              done: true,
+              loading: false,
+              connected: false,
+              error: true,
+              errorMessage: error.message
+            });
+          });
+      })
+      .then(() => {
+        setTimeout(() => {
+          this.setState({ done: false });
+        }, 500);
+      });
   };
 
   render() {
@@ -160,6 +207,16 @@ export default class LoginScreen extends Component {
               done={this.state.done}
               onPress={() => this.handleSubmit()}
             />
+            {this.state.connected &&
+              <Text style={{ color: 'white' }}>
+                {this.state.user.email}
+                {' '}
+                est connecté avec le token
+                {' '}
+                {this.state.user.token}
+              </Text>}
+            {this.state.error &&
+              <Text style={{ color: 'red' }}>{this.state.errorMessage}</Text>}
           </View>
         </Animated.View>
       </View>

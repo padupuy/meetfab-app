@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default class Input extends Component {
   render() {
