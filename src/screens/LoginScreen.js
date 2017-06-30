@@ -6,11 +6,15 @@ import {
   Dimensions,
   Image,
   Keyboard,
-  Platform
+  Platform,
+  Animated
 } from 'react-native';
 
 import Input from '../components/form/Input';
 import Button from '../components/form/Button';
+
+const IMAGE_HEIGHT = 145;
+const IMAGE_HEIGHT_SMALL = 50;
 
 export default class LoginScreen extends Component {
   state = {
@@ -18,6 +22,62 @@ export default class LoginScreen extends Component {
     password: '',
     loading: false,
     done: false
+  };
+
+  keyboardHeight = new Animated.Value(0);
+  imageHeight = new Animated.Value(IMAGE_HEIGHT);
+
+  componentWillMount() {
+    if (Platform.OS === 'ios') {
+      this.keyboardWillShowSub = Keyboard.addListener(
+        'keyboardWillShow',
+        this.keyboardWillShow
+      );
+      this.keyboardWillHideSub = Keyboard.addListener(
+        'keyboardWillHide',
+        this.keyboardWillHide
+      );
+    } else {
+      this.keyboardWillShowSub = Keyboard.addListener(
+        'keyboardDidShow',
+        this.keyboardWillShow
+      );
+      this.keyboardWillHideSub = Keyboard.addListener(
+        'keyboardDidHide',
+        this.keyboardWillHide
+      );
+    }
+  }
+
+  componentWillUnmount() {
+    this.keyboardWillShowSub.remove();
+    this.keyboardWillHideSub.remove();
+  }
+
+  keyboardWillShow = event => {
+    Animated.parallel([
+      Animated.timing(this.keyboardHeight, {
+        duration: 200,
+        toValue: event.endCoordinates.height
+      }),
+      Animated.timing(this.imageHeight, {
+        duration: 200,
+        toValue: IMAGE_HEIGHT_SMALL
+      })
+    ]).start();
+  };
+
+  keyboardWillHide = event => {
+    Animated.parallel([
+      Animated.timing(this.keyboardHeight, {
+        duration: 100,
+        toValue: 0
+      }),
+      Animated.timing(this.imageHeight, {
+        duration: 100,
+        toValue: IMAGE_HEIGHT
+      })
+    ]).start();
   };
 
   handleSubmit = () => {
@@ -38,12 +98,28 @@ export default class LoginScreen extends Component {
     return (
       <View style={[styles.container]}>
         <View style={[styles.imageWrapper, styles.pv]}>
-          <Image
+          <Animated.Image
             source={require('../assets/images/logo.png')}
-            style={[styles.image]}
+            style={[
+              styles.image,
+              {
+                opacity: this.state.opacityLogo,
+                top: this.state.offsetTopLogo,
+                height: this.imageHeight
+              }
+            ]}
           />
         </View>
-        <View style={[styles.form]}>
+        <Animated.View
+          style={[
+            styles.form,
+            {
+              top: this.state.offsetTopForm,
+              opacity: this.state.opacityForm,
+              paddingBottom: this.keyboardHeight
+            }
+          ]}
+        >
           <Input
             icon={{
               name: 'ios-person-outline',
@@ -85,7 +161,7 @@ export default class LoginScreen extends Component {
               onPress={() => this.handleSubmit()}
             />
           </View>
-        </View>
+        </Animated.View>
       </View>
     );
   }
@@ -107,9 +183,7 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     resizeMode: 'contain',
-    alignSelf: 'center',
-    width: 150,
-    height: 145
+    alignSelf: 'center'
   },
   inputWrapper: {
     flexDirection: 'row',
