@@ -7,7 +7,8 @@ import {
   Image,
   Keyboard,
   Platform,
-  Animated
+  Animated,
+  StatusBar
 } from 'react-native';
 import firebase from 'firebase';
 
@@ -96,33 +97,14 @@ export default class LoginScreen extends Component {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(user => {
-        this.setState({
-          done: true,
-          loading: false,
-          connected: true,
-          error: false,
-          user: {
-            token: user.refreshToken,
-            email: user.email
-          }
-        });
+        this.gotToHome(user);
       })
       .catch(e => {
-        //Login was not successful, let's create a new account
         firebase
           .auth()
           .createUserWithEmailAndPassword(email, password)
           .then(user => {
-            this.setState({
-              done: true,
-              loading: false,
-              connected: true,
-              error: false,
-              user: {
-                token: user.refreshToken,
-                email: user.email
-              }
-            });
+            this.gotToHome(user);
           })
           .catch(error => {
             this.setState({
@@ -141,9 +123,26 @@ export default class LoginScreen extends Component {
       });
   };
 
+  gotToHome = _user => {
+    const user = {
+      token: _user.refreshToken,
+      email: _user.email
+    };
+
+    this.props.navigator.push({
+      screen: 'meetfbabapp.HomeScreen', // unique ID registered with Navigation.registerScreen
+      title: 'Yo', // navigation bar title of the pushed screen (optional)
+      passProps: { user }, // Object that will be passed as props to the pushed screen (optional)
+      animated: true, // does the push have transition animation or does it happen immediately (optional)
+      animationType: 'fade', // does the push have fade transition animation, iOS only (optional)
+      backButtonHidden: true // hide the back button altogether (optional)
+    });
+  };
+
   render() {
     return (
       <View style={[styles.container]}>
+        <StatusBar barStyle="light-content" />
         <View style={[styles.imageWrapper, styles.pv]}>
           <Animated.Image
             source={require('../assets/images/logo.png')}
