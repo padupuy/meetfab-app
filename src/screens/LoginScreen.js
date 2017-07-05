@@ -131,7 +131,7 @@ export default class LoginScreen extends Component {
 
     this.props.navigator.push({
       screen: 'meetfbabapp.HomeScreen', // unique ID registered with Navigation.registerScreen
-      title: 'Yo', // navigation bar title of the pushed screen (optional)
+      title: 'Travel Home', // navigation bar title of the pushed screen (optional)
       passProps: { user }, // Object that will be passed as props to the pushed screen (optional)
       animated: true, // does the push have transition animation or does it happen immediately (optional)
       animationType: 'fade', // does the push have fade transition animation, iOS only (optional)
@@ -183,7 +183,7 @@ export default class LoginScreen extends Component {
             onSubmitEditing={() => this.passwordInput.textInput.focus()}
           />
           <Input
-            ref={ref => this.passwordInput = ref}
+            ref={ref => (this.passwordInput = ref)}
             icon={{
               name: 'ios-lock-outline',
               size: 25,
@@ -208,14 +208,13 @@ export default class LoginScreen extends Component {
             />
             {this.state.connected &&
               <Text style={{ color: 'white' }}>
-                {this.state.user.email}
-                {' '}
-                est connecté avec le token
-                {' '}
+                {this.state.user.email} est connecté avec le token{' '}
                 {this.state.user.token}
               </Text>}
             {this.state.error &&
-              <Text style={{ color: 'red' }}>{this.state.errorMessage}</Text>}
+              <Text style={{ color: 'red' }}>
+                {this.state.errorMessage}
+              </Text>}
           </View>
         </Animated.View>
       </View>
