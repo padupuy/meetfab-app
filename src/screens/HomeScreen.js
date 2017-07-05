@@ -111,14 +111,16 @@ export default class HomeScreen extends Component {
         passProps: { photo } // Object that will be passed as props to the pushed screen (optional)
       });
     return (
-      <TouchableOpacity onPress={() => onPhotoPressed(photo)} key={photo.name}>
+      <TouchableOpacity
+        onPress={() => onPhotoPressed(photo)}
+        key={photo.name}
+        testID={photo.name}
+      >
         <View style={styles.imageContainer}>
-          <View name={`image-${photo.name}`} containerRouteName="ImageGrid">
+          <View>
             <Image source={photo.src} style={styles.image} />
           </View>
           <View
-            name={`title-${photo.name}`}
-            containerRouteName="ImageGrid"
             style={{
               position: 'absolute',
               left: 0,
@@ -137,7 +139,7 @@ export default class HomeScreen extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.container} testID="homescreen">
         <StatusBar barStyle="dark-content" />
         <ListView
           dataSource={ds.cloneWithRows(photoRows)}

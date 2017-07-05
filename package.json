@@ -3,14 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "devDependencies": {
+    "detox": "5.3.0",
     "jest-expo": "~18.0.0",
+    "mocha": "3.4.2",
     "react-test-renderer": "16.0.0-alpha.12"
   },
   "scripts": {
     "start": "react-native start",
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "test": "node node_modules/jest/bin/jest.js --watch"
+    "test": "node node_modules/jest/bin/jest.js --watch",
+    "e2e:build": "./node_modules/.bin/detox build",
+    "e2e": "./node_modules/.bin/detox test"
   },
   "jest": {
     "preset": "jest-expo"
@@ -23,5 +27,15 @@
     "react-native-config": "0.5.0",
     "react-native-navigation": "1.1.125",
     "react-native-vector-icons": "4.2.0"
+  },
+  "detox": {
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/meetfab.app",
+        "build": "xcodebuild -project ios/meetfab.xcodeproj -scheme meetfab -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+        "type": "ios.simulator",
+        "name": "iPhone 6"
+      }
+    }
   }
 }

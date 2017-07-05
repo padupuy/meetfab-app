@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, StatusBar, Image } from 'react-native';
 export default class DetailScreen extends Component {
   render() {
     return (
-      <View style={[styles.container]}>
+      <View style={styles.container} testID="detailscreen">
         <StatusBar barStyle="dark-content" />
         <Text style={styles.title}>
           {this.props.photo.title}

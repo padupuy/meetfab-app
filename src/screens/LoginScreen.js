@@ -181,6 +181,7 @@ export default class LoginScreen extends Component {
             returnKeyType="next"
             blurOnSubmit={false}
             onSubmitEditing={() => this.passwordInput.textInput.focus()}
+            testID="username"
           />
           <Input
             ref={ref => (this.passwordInput = ref)}
@@ -198,6 +199,7 @@ export default class LoginScreen extends Component {
             returnKeyType="send"
             blurOnSubmit={true}
             onSubmitEditing={() => this.handleSubmit()}
+            testID="password"
           />
           <View style={styles.buttonWrapper}>
             <Button
@@ -205,6 +207,7 @@ export default class LoginScreen extends Component {
               loading={this.state.loading}
               done={this.state.done}
               onPress={() => this.handleSubmit()}
+              testID="loginButton"
             />
             {this.state.connected &&
               <Text style={{ color: 'white' }}>
